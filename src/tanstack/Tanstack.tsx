@@ -1,4 +1,3 @@
-// src/components/Tanstack.jsx
 "use client";
 import AppQuery from "../hooks/AppQuery";
 
