@@ -1,51 +1,32 @@
-import { useQuery } from "@tanstack/react-query"
-
-
-const getRandomNumber = async () => {
-  const res = await fetch("https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new")
-  .then((res) => res.text())
-
-  return Number(res)
-}
+// src/components/Tanstack.jsx
+"use client";
+import AppQuery from "../hooks/AppQuery";
 
 const Tanstack = () => {
-  const {
-    data: RandomNumber,
-    isLoading: Loading,
-    isFetching: Fetching,
-    isError: Error,
-    refetch: RefreshToken
-  } = useQuery({
-    queryKey: ["RandomNumber"],
-    queryFn: getRandomNumber,
-    staleTime: 10000 * 60
-  })
+  const { RandomQuery } = AppQuery();
 
-
+  if (RandomQuery.isError) {
+    return <h1>Error: {JSON.stringify(RandomQuery.error.message)}</h1>;
+  }
 
   return (
-    < >{
-      Error ?
-      <h1>{Error}</h1>
-      :  <div>
-        {
-          Fetching
-          ? <h1>Loading...</h1>
-          : <h1>{RandomNumber}</h1>
-        }
-
-      <span style={ {display: "block" , paddingBottom: "32px"}}>.....</span>
-      </div>
-    }
-   
-     
+    <>
       <div>
-          <button onClick={() => RefreshToken()}>
-            Generar nuevo número
-          </button>
+        {RandomQuery.isFetching ? (
+          <h1>Loading...</h1>
+        ) : (
+          <h1>{RandomQuery.data}</h1>
+        )}
+        <span style={{ display: "block", paddingBottom: "32px" }}>.....</span>
+      </div>
+
+      <div>
+        <button onClick={() => RandomQuery.refetch()}>
+          Generar nuevo número
+        </button>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Tanstack
+export default Tanstack;
